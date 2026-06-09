@@ -9,6 +9,11 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+        env:
+          MONGODB_URI: ${{secrets.MONGODB_URI}}
+          JWT_SECRET: ${{secrets.JWT_SECRET}}
+          ADZUNA_APP_ID: ${{secrets.ADZUNA_APP_ID}}
+          ADZUNA_APP_KEY: ${{secrets.ADZUNA_APP_KEY}}
 
         steps:
             - name: Checkout code
@@ -21,11 +26,9 @@ jobs:
 
             - name: Install dependencies
               run: npm install
+            
+            - name: Run tests
+              run: npm test
 
             - name: Build
               run: npm run build
-              env:
-                MONGODB_URI: ${{secrets.MONGODB_URI}}
-                JWT_SECRET: ${{secrets.JWT_SECRET}}
-                ADZUNA_APP_ID: ${{secrets.ADZUNA_APP_ID}}
-                ADZUNA_APP_KEY: ${{secrets.ADZUNA_APP_KEY}}
