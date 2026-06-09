@@ -10,25 +10,42 @@ jobs:
     build:
         runs-on: ubuntu-latest
         env:
-          MONGODB_URI: ${{secrets.MONGODB_URI}}
-          JWT_SECRET: ${{secrets.JWT_SECRET}}
-          ADZUNA_APP_ID: ${{secrets.ADZUNA_APP_ID}}
-          ADZUNA_APP_KEY: ${{secrets.ADZUNA_APP_KEY}}
-
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
+            ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+            ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
         steps:
             - name: Checkout code
               uses: actions/checkout@v3
-
             - name: Setup node
               uses: actions/setup-node@v3
               with:
-                node-version: '20'
-
+                  node-version: '20'
             - name: Install dependencies
               run: npm install
-            
             - name: Run tests
               run: npm test
-
             - name: Build
               run: npm run build
+
+    e2e:
+        needs: build
+        runs-on: ubuntu-latest
+        env:
+            MONGODB_URI: ${{ secrets.MONGODB_URI }}
+            JWT_SECRET: ${{ secrets.JWT_SECRET }}
+            ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+            ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+            - name: Setup node
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '20'
+            - name: Install dependencies
+              run: npm install
+            - name: Install Playwright browsers
+              run: npx playwright install --with-deps
+            - name: Run E2E tests
+              run: npx playwright test
