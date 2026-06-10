@@ -17,4 +17,6 @@ export default function Home() {
     }
 
   }, [ready, token])
+
+  return null
 }
