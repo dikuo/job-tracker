@@ -35,38 +35,38 @@ them, and manage your applications in one place.
 
 ### Setup
 
-\`\`\`bash
+```bash
 git clone https://github.com/dikuo/job-tracker.git
 cd job-tracker
 npm install
-\`\`\`
+```
 
-Create \`.env.local\`:
-\`\`\`
+Create `.env.local`:
+```
 MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 NEXT_PUBLIC_ADZUNA_APP_ID=your_adzuna_app_id
 NEXT_PUBLIC_ADZUNA_APP_KEY=your_adzuna_app_key
-\`\`\`
+```
 
-\`\`\`bash
+```bash
 npm run dev
-\`\`\`
+```
 
 Open [http://localhost:3000](http://localhost:3000)
 
 ## Testing
 
 Unit tests (Jest):
-\`\`\`bash
+```bash
 npm test
-\`\`\`
+```
 Covers password hashing, JWT, and Jobs API CRUD with a mocked database.
 
 E2E tests (Playwright):
-\`\`\`bash
+```bash
 npx playwright test
-\`\`\`
+```
 Covers login/auth, job CRUD, search, dark mode, and the Adzuna search flow.
 
 > E2E tests need local env vars + MongoDB connection — run locally, not in CI.
