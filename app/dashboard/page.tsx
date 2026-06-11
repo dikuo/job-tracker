@@ -4,18 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTheme } from "@/context/ThemeContext"
-
-interface Job {
-    _id: string
-    company: string
-    position: string
-    status: string
-    location: string[]
-    salary?: number
-    notes: string[]
-    createdAt: string
-    updatedAt: string
-}
+import Job from "@/types/job"
 
 export default function DashboardPage() {
     const router = useRouter()

@@ -4,18 +4,8 @@ import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useTheme } from "@/context/ThemeContext"
 import StatusBadge from "@/components/StatusBadge"
+import Job from "@/types/job"
 
-interface Job {
-    _id: string,
-    company: string,
-    position: string,
-    status: string,
-    location: string[],
-    salary?: number,
-    notes: string[],
-    url?: string,
-    createdAt: string
-}
 export default function JobDetailPage() {
     const router = useRouter()
     const { id } = useParams()
@@ -44,7 +34,7 @@ export default function JobDetailPage() {
                 const data = await res.json()
 
                 if (!res.ok) {
-                    setError(data.error ?? 'Failed to load job.') 
+                    setError(data.error ?? 'Failed to load job.')
                     return
                 }
 
@@ -119,16 +109,6 @@ export default function JobDetailPage() {
                 </div>
 
                 <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-100 dark:border-gray-800 space-y-4">
-                    {job?.salary && (
-                        <div>
-                            <p className="text-xs text-gray-400 uppercase tracking-wide">
-                                Salary
-                            </p>
-                            <p className="text-gray-900 dark:text-white mt-1">
-                                ${job.salary.toLocaleString()}
-                            </p>
-                        </div>
-                    )}
                     {(job?.location?.length ?? 0) > 0 && (
                         <div>
                             <p className="text-xs text-gray-400 uppercase tracking-wide">
@@ -136,6 +116,20 @@ export default function JobDetailPage() {
                             </p>
                             <p className="text-gray-900 dark:text-white mt-1">
                                 {job?.location.join(', ')}
+                            </p>
+                        </div>
+                    )}
+                    {(job?.salaryMin || job?.salaryMax) && (
+                        <div>
+                            <p className="text-xs text-gray-400 uppercase tracking-wide">
+                                Salary Range
+                            </p>
+                            <p className="text-gray-900 dark:text-white mt-1">
+                                {job?.salaryMin && job?.salaryMax
+                                    ? `$${job.salaryMin.toLocaleString()} - $${job.salaryMax.toLocaleString()}`
+                                    : job?.salaryMin
+                                        ? `$${job.salaryMin.toLocaleString()}+`
+                                        : `Up to $${job?.salaryMax?.toLocaleString()}`}
                             </p>
                         </div>
                     )}

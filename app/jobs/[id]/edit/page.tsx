@@ -14,7 +14,8 @@ export default function EditPage() {
     const [position, setPosition] = useState('')
     const [status, setStatus] = useState('')
     const [location, setLocation] = useState<string[]>([])
-    const [salary, setSalary] = useState('')
+    const [salaryMin, setSalaryMin] = useState('')
+    const [salaryMax, setSalaryMax] = useState('')
     const [url, setURL] = useState('')
     const [notes, setNotes] = useState<string[]>([])
 
@@ -40,7 +41,8 @@ export default function EditPage() {
                 setPosition(job.position)
                 setStatus(job.status)
                 setLocation(job.location)
-                setSalary(String(job.salary))
+                setSalaryMin(String(job.salaryMin))
+                setSalaryMax(String(job.salaryMax))
                 setURL(job.url)
                 setNotes(job.notes)
 
@@ -67,7 +69,8 @@ export default function EditPage() {
                     position,
                     status,
                     location,
-                    salary: Number(salary),
+                    salaryMin: Number(salaryMin),
+                    salaryMax: Number(salaryMax),
                     url,
                     notes
                 })
@@ -122,9 +125,15 @@ export default function EditPage() {
                         placeholder="Software Engineer"
                     />
                     <InputField
-                        label="Salary"
-                        value={salary}
-                        onChange={e => setSalary(e.target.value)}
+                        label="Min Salary"
+                        value={salaryMin}
+                        onChange={e => setSalaryMin(e.target.value)}
+                        placeholder="$100,000"
+                    />
+                    <InputField
+                        label="Max Salary"
+                        value={salaryMax}
+                        onChange={e => setSalaryMax(e.target.value)}
                         placeholder="$100,000"
                     />
                     <div>

@@ -16,6 +16,7 @@ test.describe('Auth', () => {
 })
 
 test.describe('Job Traacker', () => {
+    test.describe.configure({mode: 'serial'})
 
     test.beforeEach(async ({ page }) => {
         await page.goto('/login')
@@ -32,16 +33,16 @@ test.describe('Job Traacker', () => {
     test('user can add a job', async ({ page }) => {
         await page.goto('/jobs')
         await page.getByRole('button', { name: '+ Add Job' }).click()
-        await page.getByPlaceholder('Apple').fill('Anthropic')
+        await page.getByLabel('Company').fill('Anthropic')
         await page.getByPlaceholder('Software engineer').fill('SDE')
         await page.getByRole('button', { name: 'Submit' }).click()
-        await expect(page.getByText('Anthropic')).toBeVisible()
+        await expect(page.getByText('Anthropic').first()).toBeVisible()
     })
 
     test('user can search jobs', async ({ page}) => {
         await page.goto('/jobs')
         await page.getByPlaceholder('🔍 Search...').fill('Anthropic')
-        await expect(page.locator('h3', { hasText: 'Anthropic'})).toBeVisible()
+        await expect(page.locator('h3', { hasText: 'Anthropic'}).first()).toBeVisible()
     })
 
     test('user can view job detail', async ({ page }) => {
@@ -54,7 +55,7 @@ test.describe('Job Traacker', () => {
         await page.goto('/jobs')
         await page.locator('.space-y-4 > div').first().click()
         await page.getByRole('button', { name: '✏️ Edit'}).click()
-        await page.getByLabel('Salary').fill('999')
+        await page.getByLabel('Min Salary').fill('999')
         await page.getByRole('button', { name: "Save Changes"}).click()
         await expect(page.getByText('999')).toBeVisible()
     })
@@ -63,7 +64,7 @@ test.describe('Job Traacker', () => {
         await page.goto('/jobs')
         const firstCompany = await page.locator('h3').first().innerText()
         await page.getByRole('button', { name: 'Delete' }).first().click()
-        await expect(page.getByText(firstCompany)).not.toBeVisible()
+        await expect(page.getByText(firstCompany).first()).not.toBeVisible()
     })
 
     test('user can toggle dark mode', async ({page}) => {

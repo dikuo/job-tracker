@@ -50,7 +50,8 @@ describe('Jobs API', () => {
                 position: 'Dev',
                 status: 'pending',
                 location: 'CA',
-                salary: '100k',
+                salaryMin: '100000',
+                salaryMax: '100000',
                 notes: '',
                 url: ''
             })

@@ -55,7 +55,7 @@ export async function PUT(
 
         await connectDB()
         
-        const { company, position, status, location, salary, notes } = await req.json()
+        const { company, position, status, location, salaryMin, salaryMax, notes } = await req.json()
         
         const { id } = await params
         const job = await Job.findById(id)
@@ -73,7 +73,7 @@ export async function PUT(
         }
 
         const updatedJob = await Job.findByIdAndUpdate(id, {
-            $set: { company, position, status, location, salary, notes }
+            $set: { company, position, status, location, salaryMin, salaryMax, notes }
         }, { new: true, runValidators: true })
 
         return NextResponse.json({ job: updatedJob })

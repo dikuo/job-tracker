@@ -36,14 +36,15 @@ export async function POST(req: Request) {
 
         await connectDB()
 
-        const { company, position, status, location, salary, notes, url } = await req.json()
+        const { company, position, status, location, salaryMin, salaryMax, notes, url } = await req.json()
 
         const job = await Job.create({
             company,
             position,
             status,
             location,
-            salary,
+            salaryMin,
+            salaryMax,
             notes,
             url,
             userId: (user as any).id

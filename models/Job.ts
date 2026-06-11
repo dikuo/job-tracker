@@ -15,7 +15,8 @@ export interface IJob extends Document {
     userId: mongoose.Types.ObjectId,
     notes: string[],
     location: string[],
-    salary?: number,
+    salaryMin?: number,
+    salaryMax?: number,
     url?: string,
     createdAt: Date,
     updatedAt: Date
@@ -48,8 +49,13 @@ const jobSchema = new Schema<IJob>({
         type: [String],
         default: []
     },
-    salary: {
+    salaryMin: {
         type: Number,
+        default: 0
+    },
+    salaryMax: {
+        type: Number,
+        default: 0
     },
     url: {
         type: String,

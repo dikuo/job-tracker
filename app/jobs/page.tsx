@@ -4,14 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useTheme } from "@/context/ThemeContext"
 import StatusBadge from "@/components/StatusBadge"
-
-interface Job {
-    _id: string
-    company: string
-    position: string
-    status: string
-    createdAt: string
-}
+import InputField from "@/components/InputField"
+import Job from "@/types/job"
 
 export default function JobPage() {
     const router = useRouter()
@@ -20,12 +14,16 @@ export default function JobPage() {
     const [loading, setLoading] = useState(true)
     const [showForm, setShowForm] = useState(false)
     const [error, setError] = useState('')
+    const [showConfirm, setShowConfirm] = useState(false)
+    const [jobToDelete, setJobToDelete] = useState<string | null>(null)
 
     const [company, setCompany] = useState('')
     const [position, setPosition] = useState('')
     const [status, setStatus] = useState('applied')
     const [locationInput, setLocationInput] = useState('')
-    const [salary, setSalary] = useState('')
+    const [salaryMin, setSalaryMin] = useState('')
+    const [salaryMax, setSalaryMax] = useState('')
+    const [url, setURL] = useState('')
     const [notesInput, setNotesInput] = useState('')
     const [search, setSearch] = useState('')
 
@@ -85,7 +83,9 @@ export default function JobPage() {
                     position,
                     status,
                     location: locationInput.split(',').map(l => l.trim()).filter(l => l !== ''),
-                    salary: Number(salary),
+                    url,
+                    salaryMin: Number(salaryMin),
+                    salaryMax: Number(salaryMax),
                     notes: notesInput.split(',').map(n => n.trim()).filter(n => n !== '')
                 })
             })
@@ -102,9 +102,11 @@ export default function JobPage() {
             setCompany('')
             setPosition('')
             setStatus('applied')
-            setSalary('')
+            setSalaryMin('')
+            setSalaryMax('')
             setShowForm(false)
             setLocationInput('')
+            setURL('')
             setNotesInput('')
 
         } catch (err) {
@@ -112,11 +114,11 @@ export default function JobPage() {
         }
     }
 
-    const handleDeleteJob = async (e: React.MouseEvent, id: string) => {
-        e.stopPropagation()
+    const handleDeleteJob = async () => {
+        if (!jobToDelete) return
 
         try {
-            const res = await fetch(`/api/jobs/${id}`, {
+            const res = await fetch(`/api/jobs/${jobToDelete}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -125,7 +127,7 @@ export default function JobPage() {
             const data = await res.json()
 
             if (res.ok) {
-                setJobs(jobs.filter(j => j._id !== id))
+                setJobs(jobs.filter(j => j._id !== jobToDelete))
             }
             else {
                 setError(data.error ?? 'Failed to delete this job.')
@@ -133,6 +135,9 @@ export default function JobPage() {
 
         } catch (err) {
             setError('Something went wrong.')
+        } finally {
+            setShowConfirm(false)
+            setJobToDelete(null)
         }
     }
 
@@ -179,30 +184,20 @@ export default function JobPage() {
                         </h2>
                         <form onSubmit={handleAddJob} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                        Company
-                                    </label>
-                                    <input type="text"
-                                        value={company}
-                                        onChange={e => setCompany(e.target.value)}
-                                        placeholder="Apple"
-                                        required
-                                        className="input-base"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                        Position
-                                    </label>
-                                    <input type="text"
-                                        value={position}
-                                        onChange={e => setPosition(e.target.value)}
-                                        placeholder="Software engineer"
-                                        required
-                                        className="input-base"
-                                    />
-                                </div>
+                                <InputField
+                                    label="Company"
+                                    value={company}
+                                    onChange={e => setCompany(e.target.value)}
+                                    placeholder="Apple"
+                                    required
+                                />
+                                <InputField
+                                    label="Position"
+                                    value={position}
+                                    onChange={e => setPosition(e.target.value)}
+                                    placeholder="Software engineer"
+                                    required
+                                />
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
                                         Status
@@ -216,39 +211,36 @@ export default function JobPage() {
                                         <option value="rejected">Rejected</option>
                                     </select>
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                        Salary
-                                    </label>
-                                    <input type="text"
-                                        value={salary}
-                                        onChange={e => setSalary(e.target.value)}
-                                        placeholder="$100,000"
-                                        className="input-base"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                        Location
-                                    </label>
-                                    <input type="text"
-                                        value={locationInput}
-                                        onChange={e => setLocationInput(e.target.value)}
-                                        placeholder="On-site, Bay Area"
-                                        className="input-base"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                                        Notes
-                                    </label>
-                                    <input type="text"
-                                        value={notesInput}
-                                        onChange={e => setNotesInput(e.target.value)}
-                                        placeholder="Great company, Follow up needed"
-                                        className="input-base"
-                                    />
-                                </div>
+                                <InputField
+                                    label="Location"
+                                    value={locationInput}
+                                    onChange={e => setLocationInput(e.target.value)}
+                                    placeholder="On-site, Bay Area"
+                                />
+                                <InputField
+                                    label="Min Salary"
+                                    value={salaryMin}
+                                    onChange={e => setSalaryMin(e.target.value)}
+                                    placeholder="$100,000"
+                                />
+                                <InputField
+                                    label="Max Salary"
+                                    value={salaryMax}
+                                    onChange={e => setSalaryMax(e.target.value)}
+                                    placeholder="$100,000"
+                                />
+                                <InputField
+                                    label="URL"
+                                    value={url}
+                                    onChange={e => setURL(e.target.value)}
+                                    placeholder="http://apple.com/career"
+                                />
+                                <InputField
+                                    label="Notes"
+                                    value={notesInput}
+                                    onChange={e => setNotesInput(e.target.value)}
+                                    placeholder="Great company, Follow up needed"
+                                />
                             </div>
                             <button type="submit" className="w-full py-2.5 btn-primary mt-2">
                                 Submit
@@ -271,7 +263,13 @@ export default function JobPage() {
                                     <h3 className="font-semibold text-gray-900 dark:text-white">
                                         {j.company}
                                     </h3>
-                                    <button onClick={(e) => handleDeleteJob(e, j._id)} className="text-red-500 hover:text-red-700 text-sm">
+                                    <button 
+                                        onClick={(e) => {
+                                            e.stopPropagation()
+                                            setJobToDelete(j._id)
+                                            setShowConfirm(true)
+                                        }} 
+                                        className="text-red-500 hover:text-red-700 text-sm">
                                         Delete
                                     </button>
                                 </div>
@@ -287,6 +285,28 @@ export default function JobPage() {
                     </div>
                 )}
             </main>
+
+            {showConfirm && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+                    onClick={() => setShowConfirm(false)}>
+                    <div className="bg-white dark:bg-gray-900 rounded-xl p-6 w-full max-w-sm mx-4"
+                        onClick={e => e.stopPropagation()}>
+                        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                            Do you confirm to delete?
+                        </h2>
+                        <div className="flex gap-3 mt-4">
+                            <button onClick={() => setShowConfirm(false)}
+                                className="flex-1 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg text-sm font-medium hover:bg-gray-200 transition-all duration-200">
+                                ❌ Cancel
+                            </button>
+                            <button onClick={handleDeleteJob}
+                                className="flex-1 py-2.5 bg-red-400 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition-all duration-200">
+                                🗑️ Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

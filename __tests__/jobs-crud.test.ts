@@ -58,7 +58,8 @@ describe('Specific Job API', () => {
                 position: 'Engineer',
                 status: 'offered',
                 location: 'CA',
-                salary: '100k',
+                salaryMin: '100000',
+                salaryMax: '100000',
                 notes: 'Updated'
             })
         })
