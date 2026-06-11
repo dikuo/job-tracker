@@ -119,20 +119,20 @@ export default function JobDetailPage() {
                             </p>
                         </div>
                     )}
-                    {(job?.salaryMin || job?.salaryMax) && (
-                        <div>
-                            <p className="text-xs text-gray-400 uppercase tracking-wide">
-                                Salary Range
-                            </p>
-                            <p className="text-gray-900 dark:text-white mt-1">
-                                {job?.salaryMin && job?.salaryMax
-                                    ? `$${job.salaryMin.toLocaleString()} - $${job.salaryMax.toLocaleString()}`
-                                    : job?.salaryMin
-                                        ? `$${job.salaryMin.toLocaleString()}+`
-                                        : `Up to $${job?.salaryMax?.toLocaleString()}`}
-                            </p>
-                        </div>
-                    )}
+                    <div>
+                        <p className="text-xs text-gray-400 uppercase tracking-wide">
+                            Salary Range
+                        </p>
+                        <p className="text-gray-900 dark:text-white mt-1">
+                            {(job?.salaryMin ?? 0) > 0 && (job?.salaryMax ?? 0) > 0
+                                ? `$${job!.salaryMin!.toLocaleString()} - $${job!.salaryMax!.toLocaleString()}`
+                                : (job?.salaryMin ?? 0) > 0
+                                    ? `$${job!.salaryMin!.toLocaleString()}+`
+                                    : (job?.salaryMax ?? 0) > 0
+                                        ? `Up to $${job!.salaryMax!.toLocaleString()}`
+                                        : 'Not provided'}
+                        </p>
+                    </div>
                     {(job?.notes?.length ?? 0) > 0 && (
                         <div>
                             <p className="text-xs text-gray-400 uppercase tracking-wide">
