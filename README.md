@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Job Tracker
+
+Full-stack job application tracker built with Next.js, TypeScript, 
+and MongoDB. Search live job listings via the Adzuna API, save 
+them, and manage your applications in one place.
+
+🔗 **Live Demo:** [job-tracker-dikuo.vercel.app](https://job-tracker-dikuo.vercel.app/)
+
+## Features
+
+- JWT auth with bcrypt password hashing
+- Full CRUD for job applications (add, edit, delete, view)
+- Search live job listings via Adzuna API, with pagination
+- Save search results directly to your tracker
+- Dark mode (flash-free, synced before React hydration)
+- Protected routes with loading states
+- 11 Jest unit tests + 10 Playwright E2E tests
+- CI pipeline via GitHub Actions (tests + build on every push)
+
+## Tech Stack
+
+**Frontend:** Next.js (App Router), TypeScript, React, Tailwind CSS  
+**Backend:** Next.js API Routes, MongoDB, Mongoose  
+**Auth:** JWT, bcrypt  
+**Testing:** Jest, Playwright  
+**CI/CD:** GitHub Actions  
+**Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 20+
+- MongoDB Atlas (or local MongoDB)
+- Adzuna API credentials ([developer.adzuna.com](https://developer.adzuna.com/))
 
-```bash
+### Setup
+
+\`\`\`bash
+git clone https://github.com/dikuo/job-tracker.git
+cd job-tracker
+npm install
+\`\`\`
+
+Create \`.env.local\`:
+\`\`\`
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+NEXT_PUBLIC_ADZUNA_APP_ID=your_adzuna_app_id
+NEXT_PUBLIC_ADZUNA_APP_KEY=your_adzuna_app_key
+\`\`\`
+
+\`\`\`bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Testing
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Unit tests (Jest):
+\`\`\`bash
+npm test
+\`\`\`
+Covers password hashing, JWT, and Jobs API CRUD with a mocked database.
 
-## Learn More
+E2E tests (Playwright):
+\`\`\`bash
+npx playwright test
+\`\`\`
+Covers login/auth, job CRUD, search, dark mode, and the Adzuna search flow.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> E2E tests need local env vars + MongoDB connection — run locally, not in CI.
